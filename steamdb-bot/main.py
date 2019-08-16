@@ -129,7 +129,7 @@ def loadSteamDB_callback(call):
            f'*Hours:*\t{profile["hours"]}',
            f'*Average Hours:*\t{profile["hours_average"]}',
            '----------',
-           f'*SteamDB:*\t[Link]({profile["url_stamdb"]})')
+           f'*SteamDB:*\t[Link]({profile["url_steamdb"]})')
     bot.edit_message_text('\n'.join(msg), inline_message_id=call.inline_message_id, parse_mode='MARKDOWN')
 
 
