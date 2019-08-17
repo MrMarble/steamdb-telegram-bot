@@ -107,3 +107,5 @@ venv.bak/
 /Lib
 /Scripts
 pyvenv.cfg
+.idea
+steamdb-bot/steamdb.db*
