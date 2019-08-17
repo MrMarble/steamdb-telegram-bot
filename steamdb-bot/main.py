@@ -3,6 +3,7 @@ import time
 
 import telebot
 from telebot import types
+from utils import admin
 from utils import database
 from utils import settings
 from utils import steam
@@ -12,6 +13,7 @@ logging.basicConfig(level=logging.INFO)
 bot = telebot.TeleBot(settings.TELEGRAM_TOKEN, skip_pending=True)
 steam = steam.Steam()
 db = database.DB()
+admin = admin.Admin()
 
 
 def main():
@@ -26,7 +28,25 @@ def get_id():
 @bot.message_handler(commands=['start'])
 def message_start(m):
     db.log_message(m)
-    bot.send_message(m.chat.id, 'Test', True, parse_mode='MARKDOWN')
+    msg = ('*SteamDB Bot!*',
+           'This is an inline bot that shows the [steamdb.info](http://steamdb.info/calculator) data of a steam profile!',
+           'You can get some examples with /help',
+           'If you like this bot please leave some [feedback](https://telegram.me/storebot?start=steamdbbot)!',
+           '_Made by @Tinoquete_')
+    bot.send_message(chat_id=m.chat.id, text='\n'.join(msg), parse_mode='MARKDOWN', disable_web_page_preview=True)
+
+
+@bot.message_handler(commands=['help'])
+def message_help(m):
+    db.log_message(m)
+    msg = ('*SteamDB Bot!*',
+           'To get the data of a steam profile you can use its  *username* (custom  url) or *steamID*',
+           '⚠ It *does not* work with display name! those can be used for multiple users!',
+           'Example with username:',
+           '	`@steamdbbot mrmarblet`',
+           'Example with steamID:',
+           '	`@steamdbbot 76561198287455504`')
+    bot.send_message(chat_id=m.chat.id, text='\n'.join(msg), parse_mode='MARKDOWN', disable_web_page_preview=True)
 
 
 @bot.message_handler(func=lambda m: True)
@@ -46,7 +66,6 @@ def inline_query(query):
         f'Invalid Query "{query.query}" from  user {query.from_user.id}. Setting cache for {settings.CACHE_SHORT_QUERY} seconds')
 
 
-# query.query
 @bot.inline_handler(lambda q: len(q.query) > 2)
 def search_query(query):
     try:
@@ -87,6 +106,10 @@ def search_query(query):
         bot.answer_inline_query(query.id, [reply], cache_time=settings.CACHE_USER_FOUND)
         logging.info(
             f'Valid Query "{query.query}" from  user {query.from_user.id}. Setting cache for {settings.CACHE_USER_FOUND} seconds')
+        admin.log_to_channel(
+            f'<b>User:</b> @{query.from_user.username}\n<b>id:</b> {query.from_user.id}\n' +
+            f'<b>Language:</b> {query.from_user.language_code}\n<b>SteamID:</b> {steamID}\n' +
+            f'<b>Steam Name</b>: {profile["username"]}\n<b>Query:</b> {query.query}')
     except Exception:
         logging.exception(f'Something happened while answering user {query.from_user.id} query "{query.query}"')
 
@@ -120,6 +143,10 @@ def loadSteamDB_callback(call):
            '----------',
            f'*SteamDB:*\t[Link]({profile["url_steamdb"]})')
     bot.edit_message_text('\n'.join(msg), inline_message_id=call.inline_message_id, parse_mode='MARKDOWN')
+    admin.log_to_channel(
+        f'<b>User:</b> @{call.from_user.username}\n<b>id:</b> {call.from_user.id}\n' +
+        f'<b>Language:</b> {call.from_user.language_code}\n<b>SteamID:</b> {call.data}\n' +
+        f'<b>Steam Name</b>: {profile["display_name"]}')
 
 
 if __name__ == "__main__":
