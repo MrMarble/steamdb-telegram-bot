@@ -1,4 +1,5 @@
 import json
+import os
 import sqlite3
 import time
 
@@ -7,10 +8,12 @@ from . import settings
 
 class DB:
     def __init__(self):
-        self.conn = sqlite3.connect('steamdb.db', check_same_thread=False)
+        self.path = os.path.dirname(os.path.relpath(__file__))
+        self.conn = sqlite3.connect(f'{self.path}/../steamdb.db', check_same_thread=False)
+        self.setup_database()
 
     def setup_database(self):
-        with open('steamdb.sql', 'r') as file:
+        with open(f'{self.path}/steamdb.sql', 'r') as file:
             cursor = self.conn.cursor()
             for line in file.readlines():
                 cursor.execute(line)
