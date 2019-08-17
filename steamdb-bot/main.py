@@ -25,6 +25,17 @@ def get_id():
     return str(int(time.time()))
 
 
+@bot.message_handler(commands=['stats'])
+def message_stats(m):
+    if admin.is_admin(m.from_user.id):
+        logging.info(f'Sending stats to {m.from_user.id}')
+        stats = db.get_stats()
+        bot.send_message(chat_id=m.chat.id, text='\n'.join([f'*{k}*:\t`{v}`' for k, v in stats.items()]),
+                         parse_mode='MARKDOWN')
+    else:
+        logging.info(f'{m.from_user.id} tried to use a restricted command')
+
+
 @bot.message_handler(commands=['start'])
 def message_start(m):
     db.log_message(m)

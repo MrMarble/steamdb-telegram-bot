@@ -12,3 +12,7 @@ class Admin:
             self.bot.send_message(chat_id=settings.LOG_CHANNEL, text=message, disable_web_page_preview=True,
                                   disable_notification=True, parse_mode='HTML'
                                   )
+
+    @staticmethod
+    def is_admin(telegram_id):
+        return telegram_id == int(settings.BOT_ADMIN)
