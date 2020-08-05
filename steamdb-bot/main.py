@@ -25,6 +25,26 @@ def get_id():
     return str(int(time.time()))
 
 
+@bot.message_handler(commands=['cacheclear'])
+def message_stats(m):
+    if admin.is_admin(m.from_user.id):
+        logging.info(f'Clearing cache by {m.from_user.id}')
+        stats = db.clear_cache()
+        bot.send_message(chat_id=m.chat.id, text='Cache cleared',parse_mode='MARKDOWN')
+    else:
+        logging.info(f'{m.from_user.id} tried to use a restricted command')
+
+@bot.message_handler(func=lambda m: m.content_type == 'text' and m.text[0] == '$')
+def message_stats(m):
+    if admin.is_admin(m.from_user.id):
+        logging.info(f'Running a query from  {m.from_user.id}')
+        stats = db.run_query(m.text[1:])
+        bot.send_message(chat_id=m.chat.id, text=stats,parse_mode='MARKDOWN')
+    else:
+        logging.info(f'{m.from_user.id} tried to use a restricted command')
+
+
+
 @bot.message_handler(commands=['stats'])
 def message_stats(m):
     if admin.is_admin(m.from_user.id):
