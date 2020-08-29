@@ -9,7 +9,10 @@ from . import settings
 
 class Steam:
     def __init__(self):
-        self.steamdb = SteamDbParser.parser()
+        self.steamdb = SteamDbParser.Parser(cookies={
+            '__cfuid': 'db11b35c98cedd6b7573fc4f2321cde601598740493',
+            'cf_clearance': '2b3e838176af8f9b74d30fb172a6306fe6ff239d-1598743355-0-1zb8734ebezbba91dc9za6981dc5-250'
+        })
         self.db = database.DB()
 
     def is_steam_id(self, steam_id):
@@ -40,7 +43,8 @@ class Steam:
                 if data['success'] == 1:
                     steam_id = data['steamid']
         except Exception:
-            logging.exception(f'Something happened while fetching "{username}" steam_id')
+            logging.exception(
+                f'Something happened while fetching "{username}" steam_id')
         finally:
             return steam_id
 
@@ -55,5 +59,6 @@ class Steam:
                     return {'username': data['personaname'], 'profile': data['profileurl'], 'img': data['avatarfull']}
             return None
         except Exception:
-            logging.exception(f'Something happened while fetching "{steam_id}" profile data')
+            logging.exception(
+                f'Something happened while fetching "{steam_id}" profile data')
             return None
