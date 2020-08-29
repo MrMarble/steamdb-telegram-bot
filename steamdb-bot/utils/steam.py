@@ -10,7 +10,7 @@ from . import settings
 class Steam:
     def __init__(self):
         self.steamdb = SteamDbParser.Parser(cookies={
-            '__cfuid': 'db11b35c98cedd6b7573fc4f2321cde601598740493',
+            '__cfduid': 'db11b35c98cedd6b7573fc4f2321cde601598740493',
             'cf_clearance': '2b3e838176af8f9b74d30fb172a6306fe6ff239d-1598743355-0-1zb8734ebezbba91dc9za6981dc5-250'
         })
         self.db = database.DB()
@@ -26,6 +26,11 @@ class Steam:
             return data
         else:
             logging.info(f'Not in cache, fetching.')
+            if not self.steamdb.canConnect():
+                from . import admin
+                logging.warning('Cant connect to SteamDB!')
+                admin.Admin().log_to_channel('Cant connect to SteamDB!')
+                return False
             data = self.steamdb.getSteamDBProfile(steam_id)
             if data:
                 logging.info(f'Setting cache for {steam_id}')
