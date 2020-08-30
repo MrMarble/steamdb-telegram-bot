@@ -10,8 +10,11 @@ from . import settings
 class Steam:
     def __init__(self):
         self.steamdb = SteamDbParser.Parser(cookies={
-            '__cfduid': 'db11b35c98cedd6b7573fc4f2321cde601598740493',
-            'cf_clearance': '2b3e838176af8f9b74d30fb172a6306fe6ff239d-1598743355-0-1zb8734ebezbba91dc9za6981dc5-250'
+            '__cfduid': 'd654441067cd0388cd3f06e870c3543e31598745906',
+            'cf_clearance': 'd01cabe692c79ab6b124f1455eec7774c1130f6e-1598745912-0-1zb8734ebezbba91dc9za6981dc5-250',
+            'cf_chl_1':'97218f19b8ac59f',
+            'cf_chl_prog':'a41',
+            'cf_chl_seq_97218f19b8ac59f':'07ddacd3a2f9ca8'
         })
         self.db = database.DB()
 
